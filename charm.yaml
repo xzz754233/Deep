@@ -9,7 +9,7 @@ version: "0.4.1"
 # ------------------------------------------------------------------
 persona:
   name: "Event Research"
-  version: "0.1.0"
+  version: "0.1.1"
   description: "An agent for fast biographical timeline research."
   
   authors: ["Charm Team"]
@@ -43,12 +43,12 @@ pricing:
 interface:
   input:
     type: "object"
-    # 這裡對應 src/simple_graph.py 中 SimpleState 的輸入需求
     required: ["person_to_research"]
     properties:
       person_to_research:
         type: "string"
         title: "Person Name"
+        x-ui-widget: "textarea"
         description: "The name of the historical figure or person to research."
         default: "Jensen Huang"
 

@@ -127,11 +127,14 @@ async def simple_extract_node(state: SimpleState, config: RunnableConfig):
         print(f"🎉 Final Result for {state['person_to_research']}:")
         # 將 Pydantic 物件轉為 Dict 再轉 JSON 字串，以確保格式美觀
         serializable_events = [e.model_dump() for e in events]
+        
+        print("\n" + "="*40)
+        print(f"🎉 Final Result for {state['person_to_research']}:")
         print(json.dumps(serializable_events, indent=2, ensure_ascii=False))
         print("="*40 + "\n")
-        # ----------------------------------------
 
-        return {"structured_events": events}
+        # ↓ 正確：回傳轉換好的 Dict (JSON)
+        return {"structured_events": serializable_events}
         
     except Exception as e:
         print(f"❌ LLM Extraction failed: {e}")
