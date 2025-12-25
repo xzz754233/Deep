@@ -1,0 +1,85 @@
+# ==================================================================
+# Charm Agent Manifest for Event Research Lite
+# ==================================================================
+
+version: "0.4.1"
+
+# ------------------------------------------------------------------
+# 1. Identity & Store Metadata
+# ------------------------------------------------------------------
+persona:
+  name: "Event Research"
+  version: "0.1.0"
+  description: "An agent for fast biographical timeline research."
+  
+  authors: ["Charm Team"]
+  
+  tags: ["research", "history", "biography", "lite"]
+  license: "MIT"
+
+  full_description: |
+    
+    This is a historical figure research agent.
+    
+    ### Features
+    - Fast Search: Performs targeted searches focused on the individual.
+    - Parallel Crawling: Fetches and reads multiple source pages concurrently.
+    - One-Pass Extraction: Leverages long-context LLMs to generate a structured timeline in a single pass.
+    
+    ### Usage
+    Simply input the name of the person you want to research (for example, Jensen Huang), and the agent will automatically produce a timeline of key life events.
+
+  # Storefront Assets
+  assets:
+    icon: "https://github.com/xzz754233/Deep/raw/main/icon1.png"
+    banner: "https://github.com/xzz754233/Deep/raw/main/banner1.png"
+
+pricing:
+  type: "free"
+
+# ------------------------------------------------------------------
+# 2. Interface (UI Generation)
+# ------------------------------------------------------------------
+interface:
+  input:
+    type: "object"
+    # 這裡對應 src/simple_graph.py 中 SimpleState 的輸入需求
+    required: ["person_to_research"]
+    properties:
+      person_to_research:
+        type: "string"
+        title: "Person Name"
+        description: "The name of the historical figure or person to research."
+        default: "Jensen Huang"
+
+  output:
+    type: "object"
+    description: "A structured JSON list of chronological events."
+
+# ------------------------------------------------------------------
+# 3. Runtime (Execution Logic)
+# ------------------------------------------------------------------
+runtime:
+  adapter:
+    type: "langgraph"
+    
+    # [關鍵配置] 指向 src/simple_graph.py 檔案中的 simple_graph 物件
+    entry_point: "src.simple_graph:simple_graph"
+    
+    # Agent 執行所需的環境變數 (Runner 會安全注入)
+    environment_variables:
+      - "TAVILY_API_KEY"
+      - "FIRECRAWL_API_KEY"
+      - "GOOGLE_API_KEY" 
+      # 如果您在 simple_graph 用的是 OpenAI，請改為 OPENAI_API_KEY
+
+  injections:
+    llm_client: false 
+    tools: []
+
+# ------------------------------------------------------------------
+# 4. Governance (Policies)
+# ------------------------------------------------------------------
+policies:
+  allow_internet_access: true
+  max_steps: 10 # 輕量版流程很短，設 10 步綽綽有餘，防止無限迴圈
